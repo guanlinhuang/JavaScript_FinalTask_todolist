@@ -35,40 +35,72 @@ function init(data) {
 
 
     //計算 N個待完成項目
-    const list_footer = document.querySelector(".list_footer p");
-    const newData = data.filter((item) => {
+    // const list_footer = document.querySelector(".list_footer p");
+    const list_footer=document.querySelector(".list_footer p");
+    const incompleteItem = data.filter((item) => {
         return item.checked == ''; //回傳數個待完成項目
     })
     //console.log(newData.length)
-    list_footer.textContent = `${newData.length} 個待完成項目`
+    list_footer.textContent = `${incompleteItem.length} 個待完成項目`
     //不能直接使用data.length計算，因為待完成項目已完成後，仍然會顯示全部筆數的數量
 }
 init(data);
+console.log(data)
 
 
 
-//加入新的待辦事項
+//搜尋欄輸入新的待辦事項
 const text = document.querySelector('.text');
 const add = document.querySelector('.btn_add');
 
-//綁定監聽事件
+//綁定監聽事件 //點擊事件
 add.addEventListener('click', function (e) {
     e.preventDefault(); //取消a連結的預設行為，即停止點擊後會往上滑到底的效果
     //跳出警告視窗，提醒你輸入內容  //可加或不可加，不影響程式碼運作
-    if (text.value == "") {
+    if (text.value.trim() == "") { //trim()可避免只輸入空白字元還是可以新增資料
         alert("請輸入內容");
         return;
     }
 
-    //加入新的待辦事項
+    addlist()
+
+
+})
+
+//綁定監聽事件 //鍵盤事件
+text.addEventListener('keypress', function (e) {
+    if (e.key == 'Enter') {
+        if (text.value.trim() == "") { //trim()可避免只輸入空白字元還是可以新增資料
+            alert("請輸入內容");
+            return;
+        }
+        addlist()
+    }
+})
+
+////加入待辦事項的函式
+function addlist() {
     let obj = {};
     obj.content = text.value;
     obj.checked = "";
     data.push(obj);
-    // init(data); 
-    updateList() //因為有tab要切換，而增加另一個函式，切換後會有新的初始化，所以以新的初始化代替
     text.value = ""; //新增資料後，欄位自動空白
-})
+
+    //加入代辦事項後，將頁籤切換回「全部」，讓使用者知道確實有新增成功
+    //先將所有的active移除
+    document.querySelectorAll(".tab li").forEach(function (item, index) {
+        item.classList.remove("active");
+    });
+    //再把「全部」按鈕加上active（加底線）
+    document.querySelectorAll(".allBtn").forEach(function (item, index) {
+        newData = data;
+        item.classList.add("active");
+        init(newData);
+    });
+
+}
+
+
 
 
 
@@ -97,11 +129,11 @@ list.addEventListener('click', function (e) {
     if (e.target.nodeName == "INPUT") { //點擊時，其點擊位置為INPUT，將執行if
         // console.log(e.target.nodeName)
         data.forEach((item, index) => { //取出資料
-            if (index == id) { //
+            if (index == id) { //*****無法用三個等號 ===，應該不同型別(?)，待問助教*****
                 //console.log(index);
 
                 //點擊時，是空值狀態下，將執行if，使其改為checked狀態
-                if (data[index].checked == '') {
+                if (data[index].checked === '') {
                     data[index].checked = 'checked'; //如果再點擊一次，將改回空值，若沒加此行code，將改不回空值           
                 }
 
@@ -122,13 +154,13 @@ list.addEventListener('click', function (e) {
 
 //清除已完成項目
 //綁定監聽事件
-const clearCompeted = document.querySelector(".list_footer a");
-clearCompeted.addEventListener('click', function (e) {
+const clearCompleted = document.querySelector(".list_footer a");
+clearCompleted.addEventListener('click', function (e) {
     data = data.filter(function (item) {
         return item.checked == ''; //回傳數個待完成項目，同時會篩選掉已完成項目 item.checked: 'checked'
     })
-    console.log(data)
-    // init(data);
+    console.log(data, 2)
+    // init(newData);
     updateList();
 })
 
@@ -142,33 +174,38 @@ let tabStatus = 'all';
 tab.addEventListener('click', function (e) {
     tabStatus = e.target.dataset.tab; //取得data-tab的值，並傳到外層tabStatus
     // tabStatus =e.target.getAttribute('data-tab')
-    tabAll.forEach(function (item) { //點擊tab時，清除所有的tab li的active
-        item.setAttribute('class', '');
+    tabAll.forEach(function (item) {
+        // item.setAttribute('class', '');
+        item.classList.remove("active") //點擊tab時，清除所有的tab li的active
     })
-    e.target.setAttribute('class', 'active'); //點擊到該tab li，幫它加上active，即黑底線，//ex 點擊到「待完成」，幫它加active(黑底線)
+    // e.target.setAttribute('class', 'active'); 
+    e.target.classList.add("active"); //點擊到該tab li，幫它加上active，即黑底線，//ex 點擊到「待完成」，幫它加active(黑底線)
     //console.log(newData);
     updateList();
+    console.log(e.target.dataset.tab)
 })
-//setAttribute = 新增(編輯)HTML標籤屬性
+// setAttribute = 新增(編輯)HTML標籤屬性，新增或編輯後會把其他屬性蓋過去，所以不適合用在有多個屬性值的屬性
+// classList.add = 新增屬性
+// classList.remove = 可只移除其中一個屬性值，適用於有多個屬性值的屬性，如class="active allBtn"
 
 
 let newData = [];
 function updateList() {
-    //篩選出已完成或未完成項目
-    if (tabStatus == 'all') {
+    //篩選已完成或未完成項目
+    if (tabStatus === 'all') { //點擊「全部」狀態的頁籤，渲染全部項目
         newData = data;
     }
-    else if (tabStatus == 'incomplete') {
+    else if (tabStatus === 'incomplete') { //點擊「待完成」狀態的頁籤，篩選未完成項目
         newData = data.filter(function (item) {
             return item.checked == '';
         })
     }
-    else if (tabStatus == 'done') {
+    else if (tabStatus === 'done') { //點擊「已完成」狀態的頁籤，篩選已完成項目
         newData = data.filter(function (item) {
             return item.checked == 'checked';
         })
     }
-  
-    console.log(newData);
+
+    console.log(newData, 1);
     init(newData);
 }
