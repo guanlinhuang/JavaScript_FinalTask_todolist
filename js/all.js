@@ -17,11 +17,10 @@ let data = [
 ];
 
 
-
 //資料初始化
-function init(data) {
+function init(inputData) {
     let str = '';
-    data.forEach(function (item, index) {
+    inputData.forEach(function (item, index) {
         str +=
             `<li data-id="${index}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete"" data-num="${index}"></a></li>`;
     })
@@ -33,19 +32,24 @@ function init(data) {
     //innerHTML = 有編譯，不會直接列出標籤，只渲染文字部分，如印出 完成項目
     //textContent = 無編譯，直接渲染文字跟標籤，如印出 <h2>完成項目</h2>
 
-
     //計算 N個待完成項目
     // const list_footer = document.querySelector(".list_footer p");
-    const list_footer=document.querySelector(".list_footer p");
+    const list_footer = document.querySelector(".list_footer p");
     const incompleteItem = data.filter((item) => {
         return item.checked == ''; //回傳數個待完成項目
     })
     //console.log(newData.length)
     list_footer.textContent = `${incompleteItem.length} 個待完成項目`
     //不能直接使用data.length計算，因為待完成項目已完成後，仍然會顯示全部筆數的數量
+
+    // console.log(data, 4)
 }
 init(data);
-console.log(data)
+// console.log(data, 3)
+
+//在函式的範疇底下，若有和全域變數相同的參數命名，會優先以參數作為被指定的對象，因此建議可以將命名做調整，以避免混用導致對象取用錯誤的狀況產生
+//data.filter的 data 並非原始的 data，而是 function init(data) 中的 data 參數，而在後續的 updateList() 邏輯中呼叫了 init(newData)，即newData導入init()函式中，故函式裡所有的data都會變成newData了，因此在已完成的分類底下所放入的是經篩選過後的資料newData，造成永遠顯示0個待完成項目
+//所以 data.filter的 data需要與function init(data)的data不同，故參數名稱需改成其他名稱-inputData
 
 
 
@@ -61,10 +65,7 @@ add.addEventListener('click', function (e) {
         alert("請輸入內容");
         return;
     }
-
     addlist()
-
-
 })
 
 //綁定監聽事件 //鍵盤事件
@@ -95,6 +96,7 @@ function addlist() {
     document.querySelectorAll(".allBtn").forEach(function (item, index) {
         newData = data;
         item.classList.add("active");
+
         init(newData);
     });
 
@@ -129,24 +131,25 @@ list.addEventListener('click', function (e) {
     if (e.target.nodeName == "INPUT") { //點擊時，其點擊位置為INPUT，將執行if
         // console.log(e.target.nodeName)
         data.forEach((item, index) => { //取出資料
-            if (index == id) { //*****無法用三個等號 ===，應該不同型別(?)，待問助教*****
-                //console.log(index);
-
-                //點擊時，是空值狀態下，將執行if，使其改為checked狀態
-                if (data[index].checked === '') {
-                    data[index].checked = 'checked'; //如果再點擊一次，將改回空值，若沒加此行code，將改不回空值           
-                }
-
-                //若已是checked狀態下，將執行else，使其改為回空值，若沒加此else，將無法改回空值
-                else {
-                    data[index].checked = '';
-                }
-
-                console.log(data)
-                // init(data);
-                updateList();
+            if (index == id && item.checked == "") { //空值狀態下點擊，將其改為checked狀態
+                item.checked = "checked"; 
+                console.log(index)
             }
+
+            //若已是checked狀態下點擊，將其改為回空值
+            else if (index == id && item.checked == "checked") {
+                item.checked = "";
+                console.log(index)
+
+            }
+
+           
+            // init(newData);
+            updateList();
         })
+        console.log(data, 5)
+        console.log(newData, 6)
+            
     }
 })
 
@@ -159,7 +162,7 @@ clearCompleted.addEventListener('click', function (e) {
     data = data.filter(function (item) {
         return item.checked == ''; //回傳數個待完成項目，同時會篩選掉已完成項目 item.checked: 'checked'
     })
-    console.log(data, 2)
+    // console.log(data, 2)
     // init(newData);
     updateList();
 })
@@ -203,9 +206,9 @@ function updateList() {
     else if (tabStatus === 'done') { //點擊「已完成」狀態的頁籤，篩選已完成項目
         newData = data.filter(function (item) {
             return item.checked == 'checked';
+
         })
     }
-
-    console.log(newData, 1);
+    // console.log(newData, 1);
     init(newData);
 }
