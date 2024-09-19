@@ -7,10 +7,12 @@
 
 let data = [
     {
+        id: 0,
         content: "把冰箱發霉的檸檬拿去丟000",
         checked: "",
     },
     {
+        id: 1,
         content: "把冰箱發霉的檸檬拿去丟111",
         checked: "",
     }
@@ -22,9 +24,11 @@ function init(inputData) {
     let str = '';
     inputData.forEach(function (item, index) {
         str +=
-            `<li data-id="${index}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete"" data-num="${index}"></a></li>`;
+            `<li data-id="${item.id}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete"" data-num="${item.id}"></a></li>`;
     })
     // console.log(str);
+
+
 
     //宣告變數，使其可渲染到網頁
     const list = document.querySelector(".list");
@@ -84,6 +88,7 @@ function addlist() {
     let obj = {};
     obj.content = text.value;
     obj.checked = "";
+    obj.id = new Date().getTime(); //產生唯一的id值 //一定要加這個，否則將會對應不到該選項
     data.push(obj);
     text.value = ""; //新增資料後，欄位自動空白
 
@@ -131,25 +136,25 @@ list.addEventListener('click', function (e) {
     if (e.target.nodeName == "INPUT") { //點擊時，其點擊位置為INPUT，將執行if
         // console.log(e.target.nodeName)
         data.forEach((item, index) => { //取出資料
-            if (index == id && item.checked == "") { //空值狀態下點擊，將其改為checked狀態
-                item.checked = "checked"; 
+            if (item.id == id && item.checked == "") { //空值狀態下點擊，將其改為checked狀態
+                item.checked = "checked";
                 console.log(index)
             }
 
             //若已是checked狀態下點擊，將其改為回空值
-            else if (index == id && item.checked == "checked") {
+            else if (item.id == id && item.checked == "checked") {
                 item.checked = "";
                 console.log(index)
 
             }
 
-           
+
             // init(newData);
             updateList();
         })
         console.log(data, 5)
         console.log(newData, 6)
-            
+
     }
 })
 
