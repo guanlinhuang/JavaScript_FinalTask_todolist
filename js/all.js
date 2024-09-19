@@ -28,8 +28,6 @@ function init(inputData) {
     })
     // console.log(str);
 
-
-
     //宣告變數，使其可渲染到網頁
     const list = document.querySelector(".list");
     list.innerHTML = str;
@@ -49,7 +47,7 @@ function init(inputData) {
     // console.log(data, 4)
 }
 init(data);
-// console.log(data, 3)
+
 
 //在函式的範疇底下，若有和全域變數相同的參數命名，會優先以參數作為被指定的對象，因此建議可以將命名做調整，以避免混用導致對象取用錯誤的狀況產生
 //data.filter的 data 並非原始的 data，而是 function init(data) 中的 data 參數，而在後續的 updateList() 邏輯中呼叫了 init(newData)，即newData導入init()函式中，故函式裡所有的data都會變成newData了，因此在已完成的分類底下所放入的是經篩選過後的資料newData，造成永遠顯示0個待完成項目
@@ -104,7 +102,7 @@ function addlist() {
 
         init(newData);
     });
-
+    console.log(data, 3)
 }
 
 
@@ -122,9 +120,12 @@ list.addEventListener('click', function (e) {
     let num = e.target.getAttribute('data-num');
     console.log(num,10);
     data.splice(num, 1); //.splice(起始位置, 往後刪除N筆資料(包含起始位置) )
-    // init(data);
+    e.preventDefault(); 
+    // init(newData);
     updateList();
 })
+
+
 
 //checked狀態切換 //綁定監聽事件
 list.addEventListener('click', function (e) {
@@ -211,6 +212,6 @@ function updateList() {
 
         })
     }
-    // console.log(newData, 1);
+    console.log(newData, 1);
     init(newData);
 }
