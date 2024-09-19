@@ -24,7 +24,7 @@ function init(inputData) {
     let str = '';
     inputData.forEach(function (item, index) {
         str +=
-            `<li data-id="${item.id}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete"" data-num="${item.id}"></a></li>`;
+            `<li data-id="${item.id}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete" data-num="${index}"></a></li>`;
     })
     // console.log(str);
 
@@ -120,8 +120,8 @@ list.addEventListener('click', function (e) {
         return;
     }
     let num = e.target.getAttribute('data-num');
-    console.log(num);
-    data.splice(num, 1);
+    console.log(num,10);
+    data.splice(num, 1); //.splice(起始位置, 往後刪除N筆資料(包含起始位置) )
     // init(data);
     updateList();
 })
@@ -138,14 +138,11 @@ list.addEventListener('click', function (e) {
         data.forEach((item, index) => { //取出資料
             if (item.id == id && item.checked == "") { //空值狀態下點擊，將其改為checked狀態
                 item.checked = "checked";
-                console.log(index)
             }
 
             //若已是checked狀態下點擊，將其改為回空值
             else if (item.id == id && item.checked == "checked") {
                 item.checked = "";
-                console.log(index)
-
             }
 
 
