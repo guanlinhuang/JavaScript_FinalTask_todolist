@@ -24,7 +24,7 @@ function init(inputData) {
     let str = '';
     inputData.forEach(function (item, index) {
         str +=
-            `<li data-id="${item.id}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete" data-num="${index}"></a></li>`;
+            `<li data-id="${item.id}"><label class="checkbox" for=""><input type="checkbox" ${item.checked} ><span>${item.content}</span></label><a href="#" class="delete" data-num="${item.id}"></a></li>`;
     })
     // console.log(str);
 
@@ -118,11 +118,20 @@ list.addEventListener('click', function (e) {
         return;
     }
     let num = e.target.getAttribute('data-num');
-    console.log(num,10);
-    data.splice(num, 1); //.splice(起始位置, 往後刪除N筆資料(包含起始位置) )
-    e.preventDefault(); 
+    data.forEach((item, index) => {
+        if (item.id == num) {
+            data.splice(index, 1) //.splice(起始位置, 往後刪除N筆資料(包含起始位置) )
+        }
+        
+        e.preventDefault();
+        updateList();
+         console.log(item.id, 11)
+         console.log(data,12)
+    })
+
     // init(newData);
-    updateList();
+    console.log(num, 10);
+   
 })
 
 
