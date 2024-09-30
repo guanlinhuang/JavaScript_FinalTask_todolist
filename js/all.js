@@ -63,7 +63,7 @@ const add = document.querySelector('.btn_add');
 add.addEventListener('click', function (e) {
     e.preventDefault(); //取消a連結的預設行為，即停止點擊後會往上滑到底的效果
     //跳出警告視窗，提醒你輸入內容  //可加或不可加，不影響程式碼運作
-    if (text.value.trim() == "") { //trim()可避免只輸入空白字元還是可以新增資料
+    if (text.value.trim() === "") { //trim()可避免只輸入空白字元還是可以新增資料
         alert("請輸入內容");
         return;
     }
@@ -72,8 +72,8 @@ add.addEventListener('click', function (e) {
 
 //綁定監聽事件 //鍵盤事件
 text.addEventListener('keypress', function (e) {
-    if (e.key == 'Enter') {
-        if (text.value.trim() == "") { //trim()可避免只輸入空白字元還是可以新增資料
+    if (e.key === 'Enter') {
+        if (text.value.trim() === "") { //trim()可避免只輸入空白字元還是可以新增資料
             alert("請輸入內容");
             return;
         }
@@ -102,7 +102,7 @@ function addlist() {
 
         init(newData);
     });
-    console.log(data, 3)
+    // console.log(data, 3)
 }
 
 
@@ -117,21 +117,30 @@ list.addEventListener('click', function (e) {
     if (e.target.getAttribute('class') !== 'delete') {
         return;
     }
-    let num = e.target.getAttribute('data-num');
+    // let num = parseInt("e.target.getAttribute('data-num')");
+
+    let numStr = e.target.getAttribute('data-num') //numStr 為 getAttribute() 所取得的字串值，所以須轉換為數字
+    let num = parseInt(numStr) //透過parseInt轉型為數字
+    // console.log(num,13)
+    
+
     data.forEach((item, index) => {
-        if (item.id == num) {
+        if (item.id === num) {
             data.splice(index, 1) //.splice(起始位置, 往後刪除N筆資料(包含起始位置) )
         }
-        
+
         e.preventDefault();
         updateList();
-         console.log(item.id, 11)
-         console.log(data,12)
+
+        // console.log(item.id,14)
+        // console.log(typeof item.id, 'item.id')
+        // console.log(typeof num, 'num')
+        //  console.log(data,12)
     })
 
     // init(newData);
-    console.log(num, 10);
-   
+
+
 })
 
 
@@ -139,19 +148,21 @@ list.addEventListener('click', function (e) {
 //checked狀態切換 //綁定監聽事件
 list.addEventListener('click', function (e) {
 
-    let id = e.target.closest('li').getAttribute("data-id")
+    let idStr = e.target.closest('li').getAttribute("data-id") ////idStr 為 getAttribute() 所取得的字串值，所以須轉換為數字
     //closest（selectors） 方法用於檢索該元素的父節點，或者元素的父級與選擇器匹配。如果未找到祖先，則該方法返回 null 。
     //通常設定為較底層元素用closest()查找，有被父層包住的底層元素，往上查找才找得到，若與該底層元素同一層的元素，則找不到返回null。
+    let id = parseInt(idStr) //透過parseInt轉型為數字
+    // console.log(typeof id)
 
-    if (e.target.nodeName == "INPUT") { //點擊時，其點擊位置為INPUT，將執行if
+    if (e.target.nodeName === "INPUT") { //點擊時，其點擊位置為INPUT，將執行if
         // console.log(e.target.nodeName)
         data.forEach((item, index) => { //取出資料
-            if (item.id == id && item.checked == "") { //空值狀態下點擊，將其改為checked狀態
+            if (item.id === id && item.checked === "") { //空值狀態下點擊，將其改為checked狀態
                 item.checked = "checked";
             }
 
             //若已是checked狀態下點擊，將其改為回空值
-            else if (item.id == id && item.checked == "checked") {
+            else if (item.id === id && item.checked === "checked") {
                 item.checked = "";
             }
 
@@ -159,8 +170,8 @@ list.addEventListener('click', function (e) {
             // init(newData);
             updateList();
         })
-        console.log(data, 5)
-        console.log(newData, 6)
+        // console.log(data, 5)
+        // console.log(newData, 6)
 
     }
 })
@@ -197,7 +208,7 @@ tab.addEventListener('click', function (e) {
     e.target.classList.add("active"); //點擊到該tab li，幫它加上active，即黑底線，//ex 點擊到「待完成」，幫它加active(黑底線)
     //console.log(newData);
     updateList();
-    console.log(e.target.dataset.tab)
+    // console.log(e.target.dataset.tab)
 })
 // setAttribute = 新增(編輯)HTML標籤屬性，新增或編輯後會把其他屬性蓋過去，所以不適合用在有多個屬性值的屬性
 // classList.add = 新增屬性
@@ -221,6 +232,6 @@ function updateList() {
 
         })
     }
-    console.log(newData, 1);
+    // console.log(newData, 1);
     init(newData);
 }
